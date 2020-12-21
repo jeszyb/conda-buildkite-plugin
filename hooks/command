@@ -49,3 +49,5 @@ if type -P "${BUILDKITE_COMMAND%% *}" 2>/dev/null 2>&1; then
 else
   eval "./${BUILDKITE_COMMAND}"
 fi
+
+conda deactivate
