@@ -1,6 +1,8 @@
 #!/bin/bash
 set -uo pipefail
 
+ORIGINAL_PATH="${PATH}"
+
 DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 
 # shellcheck source=lib/shared.bash
@@ -51,4 +53,5 @@ fi
 
 conda deactivate
 
-echo $PATH
+echo "--- :terminal: Restore original PATH"
+export PATH="${ORIGINAL_PATH}"
