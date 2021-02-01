@@ -21,25 +21,31 @@ fi
 
 # Default name is pipeline-slug
 CONDA_ENV="${BUILDKITE_PIPELINE_SLUG}-${BUILDKITE_BRANCH//:/_}"
+CONDA_ARGS=""
 
 if [ -e "$(plugin_read_config ENVIRONMENT)" ]; then
   CONDA_ENV_FILE=${BUILDKITE_PLUGIN_CONDA_ENVIRONMENT}
-else
+  CONDA_ARGS+="--file ${CONDA_ENV_FILE}"
+elif [ -n "${BUILDKITE_PLUGIN_CONDA_ENVIRONMENT}" ]; then
   echo "Environment definition file not found: ${BUILDKITE_PLUGIN_CONDA_ENVIRONMENT}"
   exit 1
 fi
 
+if [ -n "$(plugin_read_config PACKAGES)" ]; then
+  CONDA_ARGS+=${BUILDKITE_PLUGIN_CONDA_PACKAGES}
+fi
+
 # Handle env update
-if [[ "$(plugin_read_config UPDATE "true")" == "true" ]]; then
+if [ "$(plugin_read_config UPDATE "true")" == "true" ]; then
   echo "Auto-Update environment $CONDA_ENV."
-  conda update -y -n "${CONDA_ENV}" -c conda-forge --file "${CONDA_ENV_FILE}"
+  conda update -y -n "${CONDA_ENV}" -c conda-forge ${CONDA_ARGS}
 fi
 
 if conda activate "$CONDA_ENV"; then
   :
 else
-  echo "Creating environment $CONDA_ENV from $CONDA_ENV_FILE."
-  conda create -y -n "$CONDA_ENV"  -c conda-forge --file "$CONDA_ENV_FILE" || { echo "Failed to create environment."; exit 1; }
+  echo "Creating environment $CONDA_ENV"
+  conda create -y -n "$CONDA_ENV"  -c conda-forge ${CONDA_ARGS} || { echo "Failed to create environment."; exit 1; }
   conda activate "$CONDA_ENV" || { echo "Failed to activate new environment."; exit 1; }
 fi
 

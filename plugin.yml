@@ -5,9 +5,9 @@ requirements:
   - conda
 configuration:
   properties:
+    packages:
+      type: string
     environment:
       type: string
     update:
       type: boolean
-  required:
-    - environment
