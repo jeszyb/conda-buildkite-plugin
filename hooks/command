@@ -2,7 +2,6 @@
 set -e -u -o pipefail
 
 ORIGINAL_PATH="${PATH}"
-
 DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 
 # shellcheck source=lib/shared.bash
@@ -25,8 +24,7 @@ CONDA_ARGS=""
 
 if [ -n "$(plugin_read_config ENVIRONMENT)" ]; then
   if [ -e "$(plugin_read_config ENVIRONMENT)" ]; then
-    CONDA_ENV_FILE=${BUILDKITE_PLUGIN_CONDA_ENVIRONMENT}
-    CONDA_ARGS+="--file ${CONDA_ENV_FILE}"
+    CONDA_ARGS+="--file ${BUILDKITE_PLUGIN_CONDA_ENVIRONMENT}"
   else
     echo "Environment definition file not found: ${BUILDKITE_PLUGIN_CONDA_ENVIRONMENT}"
     exit 1
